@@ -264,6 +264,7 @@ function Home() {
   const { items, loading, error } = useItems();
   const [featuredItems, setFeaturedItems] = useState([]);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
+  const [backdropSize, setBackdropSize] = useState('w780');
 
   // Seleciona filmes para o carrossel de hero
   useEffect(() => {
@@ -294,6 +295,42 @@ function Home() {
     }
   }, [featuredItems]);
 
+  // Ajustar tamanho do backdrop com base no tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 768) {
+        setBackdropSize('w300');
+      } else if (width < 1024) {
+        setBackdropSize('w780');
+      } else {
+        setBackdropSize('w1280');
+      }
+    };
+
+    // Verificar no carregamento inicial
+    handleResize();
+
+    // Adicionar evento para monitorar redimensionamento
+    window.addEventListener('resize', handleResize);
+
+    // Limpar evento quando o componente for desmontado
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Função para obter URL da imagem de fundo com tamanho adequado
+  const getBackdropUrl = (backdropPath) => {
+    // Se a URL já incluir um caminho completo, retorná-la sem modificação
+    if (backdropPath.startsWith('http')) {
+      return backdropPath;
+    }
+    
+    // Caso contrário, construir URL com o tamanho apropriado
+    // Supondo que backdropPath seja algo como "/path/to/image.jpg"
+    const baseUrl = 'https://image.tmdb.org/t/p/';
+    return `${baseUrl}${backdropSize}${backdropPath}`;
+  };
+
   // Função para filtrar itens por tipo (movie ou series)
   const filterByType = (type) => {
     return items.filter(item => item.type === type);
@@ -315,7 +352,7 @@ function Home() {
     <Container>
       {featuredItem && (
         <HeroSection>
-          <HeroBackground style={{ backgroundImage: `url(${featuredItem.backdrop})` }} />
+          <HeroBackground style={{ backgroundImage: `url(${getBackdropUrl(featuredItem.backdrop)})` }} />
           <HeroContent>
             <HeroMeta>
               {featuredItem.vote_average && (
