@@ -1,25 +1,62 @@
+import React from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import styled from 'styled-components';
-import SidebarComponent from './components/Sidebar';
+import Favorites from './components/Favorites';
+import Home from './components/Home';
+import ItemDetail from './components/ItemDetail';
+import Sidebar from './components/Sidebar';
+import { ItemsProvider } from './context/ItemsContext';
 
 const AppContainer = styled.div`
   display: flex;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #141414;
 `;
 
-const Content = styled.main`
+const ContentContainer = styled.main`
   flex: 1;
-  padding: 20px;
-  background-color: #1f2a33;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+  width: 100%;
+  overflow-x: hidden;
+  
+  @media (min-width: 769px) {
+    margin-left: 250px;
+  }
+`;
+
+const GlobalStyle = styled.div`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  body {
+    background-color: #141414;
+    color: #e5e5e5;
+    overflow-x: hidden;
+  }
 `;
 
 function App() {
   return (
-    <AppContainer>
-      <SidebarComponent />
-      <Content>
-      </Content>
-    </AppContainer>
+    <ItemsProvider>
+      <Router>
+        <GlobalStyle />
+        <AppContainer>
+          <Sidebar />
+          <ContentContainer>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/favoritos" element={<Favorites />} />
+              <Route path="/item/:id" element={<ItemDetail />} />
+            </Routes>
+          </ContentContainer>
+        </AppContainer>
+      </Router>
+    </ItemsProvider>
   );
 }
 
