@@ -31,7 +31,7 @@ export const ItemsProvider = ({ children }) => {
 
       const response = await fetch(`${BASE_URL}/movie/popular?language=pt-BR&page=1`, options);
       const data = await response.json();
-      
+      console.log(data);
       return data.results.map(movie => ({
         id: movie.id,
         type: 'movie',
@@ -40,7 +40,7 @@ export const ItemsProvider = ({ children }) => {
         image: `${IMAGE_BASE_URL}${movie.poster_path}`,
         director: 'Diretor não disponível na API básica',
         cast: 'Elenco não disponível na API básica',
-        duration: 'Duração não disponível na API básica',
+        duration: movie?.duration ?? '',
         year: new Date(movie.release_date).getFullYear(),
         rating: movie.adult ? '18 anos' : 'Livre',
         isFavorite: false,
