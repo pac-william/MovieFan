@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Favorites from './components/Favorites';
 import Home from './components/Home';
 import ItemDetail from './components/ItemDetail';
+import Profile from './components/Profile';
 import Sidebar from './components/Sidebar';
 import { ItemsProvider } from './context/ItemsContext';
 
@@ -52,6 +53,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/favoritos" element={<Favorites />} />
               <Route path="/item/:id" element={<ItemDetail />} />
+              <Route path="/perfil" element={<Profile />} />
             </Routes>
           </ContentContainer>
         </AppContainer>
