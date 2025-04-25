@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiInfo, FiPlay, FiStar } from 'react-icons/fi';
+import { FiInfo, FiPlay, FiSearch, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useItems } from '../context/ItemsContext';
@@ -260,11 +260,61 @@ const HeroYear = styled.span`
   }
 `;
 
+const SearchContainer = styled.div`
+  margin-bottom: 20px;
+  position: relative;
+  max-width: 500px;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 12px 40px 12px 15px;
+  border-radius: 6px;
+  background-color: rgba(51, 51, 51, 0.7);
+  border: 1px solid #333;
+  color: #e5e5e5;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    background-color: rgba(51, 51, 51, 0.9);
+    border-color: #555;
+  }
+
+  &::placeholder {
+    color: #999;
+  }
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+`;
+
+const NoResultsMessage = styled.div`
+  color: #e5e5e5;
+  text-align: center;
+  padding: 40px 0;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-bottom: 30px;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+`;
+
 function Home() {
   const { items, loading, error } = useItems();
   const [featuredItems, setFeaturedItems] = useState([]);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [backdropSize, setBackdropSize] = useState('w780');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Seleciona filmes para o carrossel de hero
   useEffect(() => {
@@ -331,10 +381,10 @@ function Home() {
     return `${baseUrl}${backdropSize}${backdropPath}`;
   };
 
-  // Função para filtrar itens por tipo (movie ou series)
-  const filterByType = (type) => {
-    return items.filter(item => item.type === type);
-  };
+  // Filtrar itens baseado no termo de busca
+  const filteredItems = items.filter(item => 
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return <LoadingMessage>Carregando conteúdo...</LoadingMessage>;
@@ -343,6 +393,11 @@ function Home() {
   if (error) {
     return <ErrorMessage>{error}</ErrorMessage>;
   }
+
+  // Aplicar primeiro o filtro de busca e depois o filtro por tipo
+  const filterByType = (type) => {
+    return filteredItems.filter(item => item.type === type);
+  };
 
   const movies = filterByType('movie');
   const series = filterByType('series');
@@ -379,26 +434,44 @@ function Home() {
         </HeroSection>
       )}
 
-      {movies.length > 0 && (
-        <Section>
-          <SectionTitle>Filmes</SectionTitle>
-          <ItemsGrid>
-            {movies.map(movie => (
-              <ItemCard key={movie.id} item={movie} />
-            ))}
-          </ItemsGrid>
-        </Section>
-      )}
+      <SearchContainer>
+        <SearchInput 
+          type="text"
+          placeholder="Pesquisar filmes e séries..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <SearchIcon>
+          <FiSearch size={18} />
+        </SearchIcon>
+      </SearchContainer>
 
-      {series.length > 0 && (
-        <Section>
-          <SectionTitle>Séries</SectionTitle>
-          <ItemsGrid>
-            {series.map(series => (
-              <ItemCard key={series.id} item={series} />
-            ))}
-          </ItemsGrid>
-        </Section>
+      {filteredItems.length === 0 ? (
+        <NoResultsMessage>Nenhum item encontrado.</NoResultsMessage>
+      ) : (
+        <>
+          {movies.length > 0 && (
+            <Section>
+              <SectionTitle>Filmes</SectionTitle>
+              <ItemsGrid>
+                {movies.map(movie => (
+                  <ItemCard key={movie.id} item={movie} />
+                ))}
+              </ItemsGrid>
+            </Section>
+          )}
+
+          {series.length > 0 && (
+            <Section>
+              <SectionTitle>Séries</SectionTitle>
+              <ItemsGrid>
+                {series.map(series => (
+                  <ItemCard key={series.id} item={series} />
+                ))}
+              </ItemsGrid>
+            </Section>
+          )}
+        </>
       )}
     </Container>
   );

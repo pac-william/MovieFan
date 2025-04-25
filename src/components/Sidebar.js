@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FiChevronLeft, FiChevronRight, FiDatabase, FiHome, FiLogOut, FiMenu, FiSettings, FiStar, FiUser, FiX } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiHome, FiLogOut, FiMenu, FiStar, FiUser, FiX } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import logo from '../assets/metflix_logo.png';
+import logo from '../assets/streamly_logo.png';
 
 const SidebarWrapper = styled.div`
   position: relative;
@@ -79,7 +79,7 @@ const SidebarList = styled.ul`
   margin-top: 20px;
 `;
 
-const SidebarItem = styled.li`
+const SidebarItem = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -104,7 +104,7 @@ const SidebarItem = styled.li`
   }
 `;
 
-const SidebarLink = styled(Link)`
+const SidebarLink = styled.p`
   text-decoration: none;
   color: inherit;
   display: flex;
@@ -179,41 +179,33 @@ function SidebarComponent() {
       <HamburgerButton onClick={toggleSidebar} isOpen={isOpen}>
         <FiMenu size={24} />
       </HamburgerButton>
-      
+
       <ToggleButton isOpen={isOpen} onClick={toggleSidebar} showHamburger={!isMobile}>
         {isOpen ? (isMobile ? <FiX size={24} /> : <FiChevronLeft size={20} />) : <FiChevronRight size={20} />}
       </ToggleButton>
-      
+
       <SidebarOverlay isOpen={isOpen} onClick={toggleSidebar} />
-      
+
       <Sidebar isOpen={isOpen}>
         <Logo src={logo} alt="Logo" />
         <SidebarList>
-          <SidebarItem>
+          <SidebarItem as={Link} to="/" onClick={isMobile ? toggleSidebar : undefined}>
             <FiHome size={20} />
-            <SidebarLink to="/" onClick={isMobile ? toggleSidebar : undefined}>Página Inicial</SidebarLink>
+            <SidebarLink>Página Inicial</SidebarLink>
           </SidebarItem>
-          <SidebarItem>
+          <SidebarItem as={Link} to="/favoritos" onClick={isMobile ? toggleSidebar : undefined}>
             <FiStar size={20} />
-            <SidebarLink to="/favoritos" onClick={isMobile ? toggleSidebar : undefined}>Favoritos</SidebarLink>
+            <SidebarLink>Favoritos</SidebarLink>
           </SidebarItem>
-          <SidebarItem>
+          <SidebarItem as={Link} to="/perfil" onClick={isMobile ? toggleSidebar : undefined}>
             <FiUser size={20} />
-            <SidebarLink to="/perfil" onClick={isMobile ? toggleSidebar : undefined}>Perfil</SidebarLink>
-          </SidebarItem>
-          <SidebarItem>
-            <FiDatabase size={20} />
-            <SidebarLink to="/admin" onClick={isMobile ? toggleSidebar : undefined}>Administração</SidebarLink>
+            <SidebarLink>Perfil</SidebarLink>
           </SidebarItem>
         </SidebarList>
         <SidebarFooter>
-          <SidebarItem>
-            <FiSettings size={20} />
-            <SidebarLink to="/configuracoes" onClick={isMobile ? toggleSidebar : undefined}>Configurações</SidebarLink>
-          </SidebarItem>
-          <SidebarItem>
+          <SidebarItem as={Link} to="/logout" onClick={isMobile ? toggleSidebar : undefined}>
             <FiLogOut size={20} />
-            <SidebarLink to="/logout" onClick={isMobile ? toggleSidebar : undefined}>Sair</SidebarLink>
+            <SidebarLink>Sair</SidebarLink>
           </SidebarItem>
         </SidebarFooter>
       </Sidebar>
