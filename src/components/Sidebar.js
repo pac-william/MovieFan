@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiChevronLeft, FiChevronRight, FiHome, FiLogOut, FiMenu, FiStar, FiUser, FiX } from 'react-icons/fi';
+import { FiHome, FiLogOut, FiMenu, FiStar, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import logo from '../assets/streamly_logo.png';
@@ -179,10 +179,6 @@ function SidebarComponent() {
       <HamburgerButton onClick={toggleSidebar} isOpen={isOpen}>
         <FiMenu size={24} />
       </HamburgerButton>
-
-      <ToggleButton isOpen={isOpen} onClick={toggleSidebar} showHamburger={!isMobile}>
-        {isOpen ? (isMobile ? <FiX size={24} /> : <FiChevronLeft size={20} />) : <FiChevronRight size={20} />}
-      </ToggleButton>
 
       <SidebarOverlay isOpen={isOpen} onClick={toggleSidebar} />
 

@@ -1,47 +1,104 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FaCalendarAlt, FaEdit, FaEnvelope, FaFilm, FaGlobe, FaMapMarkerAlt, FaPhone, FaSave, FaStar, FaUndo, FaUser, FaVenusMars } from 'react-icons/fa';
 import styled from 'styled-components';
 
-const ProfileContainer = styled.div`
-  padding: 40px;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background-color: #0f0f0f;
+  padding: 40px 20px;
 `;
 
-const ProfileCard = styled.div`
+const ProfileContainer = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #fff;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ProfileSidebar = styled.div`
   background-color: #1c1c1c;
   padding: 30px;
   border-radius: 15px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
 `;
 
-const Avatar = styled.img`
-  width: 130px;
-  height: 130px;
+const ProfileContent = styled.div`
+  background-color: #1c1c1c;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+`;
+
+const Avatar = styled.div`
+  position: relative;
+  margin-bottom: 20px;
+  
+  &:hover .avatar-overlay {
+    opacity: 1;
+  }
+`;
+
+const AvatarImage = styled.img`
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  border: 3px solid red;
+  border: 4px solid #e50914;
   object-fit: cover;
-  margin: 0 auto 20px;
-  display: block;
+  transition: filter 0.3s ease;
 `;
 
-const Info = styled.div`
-  font-size: 18px;
-  line-height: 1.8;
+const AvatarOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+`;
 
-  span {
-    font-weight: bold;
+const Title = styled.h1`
+  margin-bottom: 30px;
+  font-size: 28px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  
+  svg {
     color: #e50914;
   }
 `;
 
-const Title = styled.h1`
+const SectionTitle = styled.h2`
+  font-size: 22px;
   margin-bottom: 20px;
-  font-size: 28px;
-  text-align: center;
+  color: #e50914;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
 `;
 
 const Button = styled.button`
@@ -55,6 +112,10 @@ const Button = styled.button`
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: ${props => props.fullWidth ? '100%' : 'auto'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   
   &:hover {
     background-color: ${props => props.secondary ? '#444' : '#f40612'};
@@ -66,6 +127,7 @@ const ButtonGroup = styled.div`
   gap: 10px;
   margin-top: 20px;
   justify-content: center;
+  flex-wrap: wrap;
 `;
 
 const EditForm = styled.div`
@@ -82,10 +144,13 @@ const InputGroup = styled.div`
     margin-bottom: 5px;
     font-weight: bold;
     color: #e50914;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   
-  input, select {
-    padding: 10px;
+  input, select, textarea {
+    padding: 12px;
     border-radius: 4px;
     border: 1px solid #333;
     background-color: #222;
@@ -95,7 +160,90 @@ const InputGroup = styled.div`
     &:focus {
       outline: none;
       border-color: #e50914;
+      box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.3);
     }
+  }
+  
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+`;
+
+const InfoCard = styled.div`
+  margin-bottom: 30px;
+`;
+
+const InfoItem = styled.div`
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  
+  svg {
+    color: #e50914;
+    margin-right: 10px;
+    min-width: 20px;
+  }
+  
+  span.label {
+    font-weight: bold;
+    color: #999;
+    margin-right: 10px;
+    min-width: 120px;
+  }
+  
+  span.value {
+    color: #fff;
+  }
+`;
+
+const Badge = styled.span`
+  background-color: #e50914;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 30px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 5px;
+`;
+
+const BadgesContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+`;
+
+const StatsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StatCard = styled.div`
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  
+  .stat-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #e50914;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: #999;
+    margin-top: 5px;
   }
 `;
 
@@ -106,6 +254,23 @@ function Profile() {
     email: "narutouzumaki@email.com",
     genero: "Masculino",
     dataNascimento: "1990-01-01",
+    telefone: "(11) 98765-4321",
+    localizacao: "Konoha, País do Fogo",
+    biografia: "Ninja determinado que sonha em se tornar Hokage! Adoro ramen e nunca desisto dos meus amigos.",
+    generosFavoritos: ["Ação", "Aventura", "Ficção Científica", "Animação"],
+    idiomas: ["Português", "Inglês", "Japonês"],
+    estatisticas: {
+      filmesAssistidos: 248,
+      avaliados: 176,
+      favoritos: 42
+    },
+    redesSociais: {
+      instagram: "@naruto_uzumaki",
+      twitter: "@narutouzumaki",
+      facebook: "naruto.uzumaki"
+    },
+    plano: "Premium",
+    membro_desde: "Janeiro 2020",
     avatar: require('../assets/foto_perfil.jpg')
   };
   
@@ -120,7 +285,10 @@ function Profile() {
         const parsedData = JSON.parse(savedData);
         // Garantir que o avatar ainda esteja disponível
         parsedData.avatar = defaultUser.avatar;
-        setUserData(parsedData);
+        
+        // Garantir que todos os campos estejam presentes
+        const mergedData = {...defaultUser, ...parsedData};
+        setUserData(mergedData);
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
       }
@@ -147,6 +315,23 @@ function Profile() {
     }));
   };
   
+  // Função para lidar com alterações em arrays (gêneros favoritos, idiomas)
+  const handleArrayChange = (e, field) => {
+    const { value, checked } = e.target;
+    
+    setUserData(prev => {
+      const currentValues = [...prev[field]];
+      
+      if (checked && !currentValues.includes(value)) {
+        return { ...prev, [field]: [...currentValues, value] };
+      } else if (!checked && currentValues.includes(value)) {
+        return { ...prev, [field]: currentValues.filter(item => item !== value) };
+      }
+      
+      return prev;
+    });
+  };
+  
   // Função para resetar para os dados padrão
   const handleReset = () => {
     localStorage.removeItem('userData');
@@ -169,18 +354,91 @@ function Profile() {
     }
   };
 
+  // Função para calcular idade
+  const calculateAge = (birthdate) => {
+    if (!birthdate) return '';
+    
+    const birthDate = new Date(birthdate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+
+  // Lista de opções para gêneros de filmes
+  const generoOptions = [
+    "Ação", "Aventura", "Animação", "Comédia", "Crime",
+    "Documentário", "Drama", "Fantasia", "Horror",
+    "Musical", "Mistério", "Romance", "Ficção Científica",
+    "Suspense", "Guerra", "Faroeste"
+  ];
+  
+  // Lista de opções para idiomas
+  const idiomaOptions = [
+    "Português", "Inglês", "Espanhol", "Francês", "Alemão",
+    "Italiano", "Japonês", "Coreano", "Mandarim", "Russo"
+  ];
+
   return (
-    <ProfileContainer>
-      <ProfileCard>
-        <Title>👤 Meu Perfil</Title>
-        <Avatar src={userData.avatar} alt="Foto do Usuário" />
+    <PageContainer>
+      <ProfileContainer>
+        <ProfileSidebar>
+          <Avatar>
+            <AvatarImage src={userData.avatar} alt="Foto do Usuário" />
+            {isEditing && (
+              <AvatarOverlay className="avatar-overlay">
+                <span style={{ color: 'white' }}>Alterar foto</span>
+              </AvatarOverlay>
+            )}
+          </Avatar>
+          
+          <Title>
+            <FaUser /> {!isEditing ? userData.nome : 'Editando Perfil'}
+          </Title>
+          
+          <InfoCard>
+            <InfoItem>
+              <FaStar />
+              <span className="label">Plano:</span>
+              <span className="value">{userData.plano}</span>
+            </InfoItem>
+            <InfoItem>
+              <FaCalendarAlt />
+              <span className="label">Membro desde:</span>
+              <span className="value">{userData.membro_desde}</span>
+            </InfoItem>
+          </InfoCard>
+          
+          {!isEditing ? (
+            <ButtonGroup>
+              <Button onClick={() => setIsEditing(true)}>
+                <FaEdit /> Editar Perfil
+              </Button>
+            </ButtonGroup>
+          ) : (
+            <ButtonGroup>
+              <Button onClick={handleSave}>
+                <FaSave /> Salvar
+              </Button>
+              <Button secondary onClick={() => setIsEditing(false)}>
+                <FaUndo /> Cancelar
+              </Button>
+            </ButtonGroup>
+          )}
+        </ProfileSidebar>
         
-        {isEditing ? (
-          // Formulário de edição
-          <>
+        <ProfileContent>
+          {isEditing ? (
+            // Formulário de edição
             <EditForm>
+              <SectionTitle><FaUser /> Informações Pessoais</SectionTitle>
               <InputGroup>
-                <label>Nome:</label>
+                <label><FaUser /> Nome:</label>
                 <input 
                   name="nome" 
                   value={userData.nome} 
@@ -188,15 +446,24 @@ function Profile() {
                 />
               </InputGroup>
               <InputGroup>
-                <label>Email:</label>
+                <label><FaEnvelope /> Email:</label>
                 <input 
                   name="email" 
+                  type="email"
                   value={userData.email} 
                   onChange={handleChange}
                 />
               </InputGroup>
               <InputGroup>
-                <label>Gênero:</label>
+                <label><FaPhone /> Telefone:</label>
+                <input 
+                  name="telefone" 
+                  value={userData.telefone} 
+                  onChange={handleChange}
+                />
+              </InputGroup>
+              <InputGroup>
+                <label><FaVenusMars /> Gênero:</label>
                 <select 
                   name="genero" 
                   value={userData.genero} 
@@ -209,7 +476,7 @@ function Profile() {
                 </select>
               </InputGroup>
               <InputGroup>
-                <label>Data de Nascimento:</label>
+                <label><FaCalendarAlt /> Data de Nascimento:</label>
                 <input 
                   type="date"
                   name="dataNascimento" 
@@ -217,29 +484,190 @@ function Profile() {
                   onChange={handleChange}
                 />
               </InputGroup>
-              <ButtonGroup>
-                <Button onClick={handleSave}>Salvar</Button>
-                <Button secondary onClick={() => setIsEditing(false)}>Cancelar</Button>
-              </ButtonGroup>
+              <InputGroup>
+                <label><FaMapMarkerAlt /> Localização:</label>
+                <input 
+                  name="localizacao" 
+                  value={userData.localizacao} 
+                  onChange={handleChange}
+                />
+              </InputGroup>
+              <InputGroup>
+                <label><FaUser /> Biografia:</label>
+                <textarea 
+                  name="biografia" 
+                  value={userData.biografia} 
+                  onChange={handleChange}
+                />
+              </InputGroup>
+              
+              <SectionTitle><FaFilm /> Preferências de Filmes</SectionTitle>
+              <InputGroup>
+                <label>Gêneros Favoritos:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {generoOptions.map(genero => (
+                    <div key={genero} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <input
+                        type="checkbox"
+                        id={`genero-${genero}`}
+                        value={genero}
+                        checked={userData.generosFavoritos.includes(genero)}
+                        onChange={e => handleArrayChange(e, 'generosFavoritos')}
+                      />
+                      <label htmlFor={`genero-${genero}`} style={{ color: 'white', fontWeight: 'normal' }}>{genero}</label>
+                    </div>
+                  ))}
+                </div>
+              </InputGroup>
+              
+              <SectionTitle><FaGlobe /> Idiomas</SectionTitle>
+              <InputGroup>
+                <label>Idiomas que você entende:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {idiomaOptions.map(idioma => (
+                    <div key={idioma} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <input
+                        type="checkbox"
+                        id={`idioma-${idioma}`}
+                        value={idioma}
+                        checked={userData.idiomas.includes(idioma)}
+                        onChange={e => handleArrayChange(e, 'idiomas')}
+                      />
+                      <label htmlFor={`idioma-${idioma}`} style={{ color: 'white', fontWeight: 'normal' }}>{idioma}</label>
+                    </div>
+                  ))}
+                </div>
+              </InputGroup>
+              
+              <SectionTitle>Redes Sociais</SectionTitle>
+              <InputGroup>
+                <label>Instagram:</label>
+                <input 
+                  name="redesSociais.instagram" 
+                  value={userData.redesSociais.instagram} 
+                  onChange={e => setUserData({...userData, redesSociais: {...userData.redesSociais, instagram: e.target.value}})}
+                />
+              </InputGroup>
+              <InputGroup>
+                <label>Twitter:</label>
+                <input 
+                  name="redesSociais.twitter" 
+                  value={userData.redesSociais.twitter} 
+                  onChange={e => setUserData({...userData, redesSociais: {...userData.redesSociais, twitter: e.target.value}})}
+                />
+              </InputGroup>
+              <InputGroup>
+                <label>Facebook:</label>
+                <input 
+                  name="redesSociais.facebook" 
+                  value={userData.redesSociais.facebook} 
+                  onChange={e => setUserData({...userData, redesSociais: {...userData.redesSociais, facebook: e.target.value}})}
+                />
+              </InputGroup>
             </EditForm>
-          </>
-        ) : (
-          // Visualização normal
-          <>
-            <Info>
-              <p><span>Nome:</span> {userData.nome}</p>
-              <p><span>Email:</span> {userData.email}</p>
-              <p><span>Gênero:</span> {userData.genero}</p>
-              <p><span>Data de Nascimento:</span> {formatDate(userData.dataNascimento)}</p>
-            </Info>
-            <ButtonGroup>
-              <Button onClick={() => setIsEditing(true)}>Editar Perfil</Button>
-              <Button secondary onClick={handleReset}>Restaurar Padrão</Button>
-            </ButtonGroup>
-          </>
-        )}
-      </ProfileCard>
-    </ProfileContainer>
+          ) : (
+            // Visualização normal
+            <>
+              <SectionTitle><FaUser /> Informações Pessoais</SectionTitle>
+              <InfoCard>
+                <InfoItem>
+                  <FaUser />
+                  <span className="label">Nome:</span>
+                  <span className="value">{userData.nome}</span>
+                </InfoItem>
+                <InfoItem>
+                  <FaEnvelope />
+                  <span className="label">Email:</span>
+                  <span className="value">{userData.email}</span>
+                </InfoItem>
+                <InfoItem>
+                  <FaPhone />
+                  <span className="label">Telefone:</span>
+                  <span className="value">{userData.telefone}</span>
+                </InfoItem>
+                <InfoItem>
+                  <FaVenusMars />
+                  <span className="label">Gênero:</span>
+                  <span className="value">{userData.genero}</span>
+                </InfoItem>
+                <InfoItem>
+                  <FaCalendarAlt />
+                  <span className="label">Data de Nasc:</span>
+                  <span className="value">{formatDate(userData.dataNascimento)} ({calculateAge(userData.dataNascimento)} anos)</span>
+                </InfoItem>
+                <InfoItem>
+                  <FaMapMarkerAlt />
+                  <span className="label">Localização:</span>
+                  <span className="value">{userData.localizacao}</span>
+                </InfoItem>
+              </InfoCard>
+              
+              <SectionTitle><FaUser /> Biografia</SectionTitle>
+              <InfoCard>
+                <p style={{ lineHeight: '1.6', color: '#ddd' }}>{userData.biografia}</p>
+              </InfoCard>
+              
+              <SectionTitle><FaFilm /> Preferências de Filmes</SectionTitle>
+              <InfoCard>
+                <InfoItem>
+                  <FaFilm />
+                  <span className="label">Gêneros Favoritos:</span>
+                </InfoItem>
+                <BadgesContainer>
+                  {userData.generosFavoritos.map(genero => (
+                    <Badge key={genero}>{genero}</Badge>
+                  ))}
+                </BadgesContainer>
+              </InfoCard>
+              
+              <SectionTitle><FaGlobe /> Idiomas</SectionTitle>
+              <InfoCard>
+                <BadgesContainer>
+                  {userData.idiomas.map(idioma => (
+                    <Badge key={idioma}>{idioma}</Badge>
+                  ))}
+                </BadgesContainer>
+              </InfoCard>
+              
+              <SectionTitle><FaStar /> Estatísticas</SectionTitle>
+              <StatsContainer>
+                <StatCard>
+                  <div className="stat-value">{userData.estatisticas.filmesAssistidos}</div>
+                  <div className="stat-label">Filmes Assistidos</div>
+                </StatCard>
+                <StatCard>
+                  <div className="stat-value">{userData.estatisticas.avaliados}</div>
+                  <div className="stat-label">Filmes Avaliados</div>
+                </StatCard>
+                <StatCard>
+                  <div className="stat-value">{userData.estatisticas.favoritos}</div>
+                  <div className="stat-label">Filmes Favoritos</div>
+                </StatCard>
+              </StatsContainer>
+              
+              <SectionTitle>Redes Sociais</SectionTitle>
+              <InfoCard>
+                <InfoItem>
+                  <span style={{ fontSize: '20px' }}>📱</span>
+                  <span className="label">Instagram:</span>
+                  <span className="value">{userData.redesSociais.instagram}</span>
+                </InfoItem>
+                <InfoItem>
+                  <span style={{ fontSize: '20px' }}>🐦</span>
+                  <span className="label">Twitter:</span>
+                  <span className="value">{userData.redesSociais.twitter}</span>
+                </InfoItem>
+                <InfoItem>
+                  <span style={{ fontSize: '20px' }}>👤</span>
+                  <span className="label">Facebook:</span>
+                  <span className="value">{userData.redesSociais.facebook}</span>
+                </InfoItem>
+              </InfoCard>
+            </>
+          )}
+        </ProfileContent>
+      </ProfileContainer>
+    </PageContainer>
   );
 }
 
